@@ -24,7 +24,7 @@ ConvertXciToNsp.exe <folder_path> [-e] [-d] [-r] [-recursive]
 
 ### Options
 - `-c` : Convert XCI files to .NSP files
-- `-d` : Delete XCI files after successful conversion (be careful with that!)
+- `-d` : Delete XCI files after successful conversion
 - `-r` : Rename NSP files to predefined format : `GameTitle[TitleID][BASE].nsp`
 - `-recursive` : Process XCI files in subfolders as well
 
