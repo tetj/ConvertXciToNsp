@@ -41,6 +41,15 @@ if (files.Length == 0)
 
 Console.WriteLine($"Found {files.Length} {fileExtension} file(s) in '{folderPath}'{(recursive ? " (including subfolders)" : "")}.");
 
+string executablePath = Path.Combine(AppContext.BaseDirectory, "4nxci.exe");
+if (!File.Exists(executablePath))
+{
+    Console.WriteLine($"Error: 4nxci.exe not found at '{executablePath}'.");
+    Console.WriteLine("Make sure 4nxci.exe is in the same directory as ConvertXciToNsp.exe.");
+    Console.WriteLine("https://github.com/tetj/4NXCI-2026");
+    return 1;
+}
+
 foreach (string file in files)
 {
     Console.WriteLine($"Processing: {Path.GetFileName(file)}");
@@ -60,25 +69,33 @@ foreach (string file in files)
         WorkingDirectory = AppContext.BaseDirectory
     };
 
-    using var process = System.Diagnostics.Process.Start(processInfo);
-    if (process != null)
+    try
     {
-        process.WaitForExit();
-        string RED = Console.IsOutputRedirected ? "" : "\x1b[91m";
-        string NORMAL = Console.IsOutputRedirected ? "" : "\x1b[39m";
-
-        if (process.ExitCode == 0)
+        using var process = System.Diagnostics.Process.Start(processInfo);
+        if (process != null)
         {
-            Console.WriteLine($"Completed: {Path.GetFileName(file)} (Exit code: {process.ExitCode})");
+            process.WaitForExit();
+            string RED = Console.IsOutputRedirected ? "" : "\x1b[91m";
+            string NORMAL = Console.IsOutputRedirected ? "" : "\x1b[39m";
+
+            if (process.ExitCode == 0)
+            {
+                Console.WriteLine($"Completed: {Path.GetFileName(file)} (Exit code: {process.ExitCode})");
+            }
+            else
+            {
+                Console.WriteLine($"{RED}Error: {Path.GetFileName(file)} (Exit code: {process.ExitCode}){NORMAL}");
+                Console.WriteLine($"{RED}You can try running 4nxci.exe manually for more details.{NORMAL}");
+            }
         }
         else
         {
-            Console.WriteLine($"{RED}Error: {Path.GetFileName(file)} (Exit code: {process.ExitCode}){NORMAL}");
+            Console.WriteLine($"Error: Failed to start process for {Path.GetFileName(file)}");
         }
     }
-    else
+    catch (Exception ex)
     {
-        Console.WriteLine($"Error: Failed to start process for {Path.GetFileName(file)}");
+        Console.WriteLine($"Error: Failed to start 4nxci.exe for {Path.GetFileName(file)}: {ex.Message}");
     }
 }
 
