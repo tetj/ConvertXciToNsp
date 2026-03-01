@@ -64,7 +64,17 @@ foreach (string file in files)
     if (process != null)
     {
         process.WaitForExit();
-        Console.WriteLine($"Completed: {Path.GetFileName(file)} (Exit code: {process.ExitCode})");
+        string RED = Console.IsOutputRedirected ? "" : "\x1b[91m";
+        string NORMAL = Console.IsOutputRedirected ? "" : "\x1b[39m";
+
+        if (process.ExitCode == 0)
+        {
+            Console.WriteLine($"Completed: {Path.GetFileName(file)} (Exit code: {process.ExitCode})");
+        }
+        else
+        {
+            Console.WriteLine($"{RED}Error: {Path.GetFileName(file)} (Exit code: {process.ExitCode}){NORMAL}");
+        }
     }
     else
     {
