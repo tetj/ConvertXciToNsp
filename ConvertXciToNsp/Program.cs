@@ -1,9 +1,9 @@
 ﻿if (args.Length == 0)
 {
     Console.WriteLine("Usage: ConvertXciToNsp <folder_path> [-c] [-d] [-r] [-recursive]");
-    Console.WriteLine("  -c         : Convert NSP files");
+    Console.WriteLine("  -c         : Convert XCI files");
     Console.WriteLine("  -d         : Delete XCI files after conversion");
-    Console.WriteLine("  -r         : Rename NSP files");
+    Console.WriteLine("  -r         : Rename NSP/NSZ files");
     Console.WriteLine("  -recursive : Process files in subfolders as well");
     return 1;
 }
@@ -27,11 +27,11 @@ if (!Directory.Exists(folderPath))
     return 1;
 }
 
-string filePattern = renameNsp ? "*.nsp" : "*.xci";
-string fileExtension = renameNsp ? ".nsp" : ".xci";
+string fileExtension = renameNsp ? ".nsp / .nsz" : ".xci";
 
 SearchOption searchOption = recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-string[] files = Directory.GetFiles(folderPath, filePattern, searchOption);
+string[] patterns = renameNsp ? ["*.nsp", "*.nsz"] : ["*.xci"];
+string[] files = patterns.SelectMany(p => Directory.GetFiles(folderPath, p, searchOption)).ToArray();
 
 if (files.Length == 0)
 {
